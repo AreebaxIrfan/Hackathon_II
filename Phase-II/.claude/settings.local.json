@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find . -name \"*.md\" -exec grep -l \"constitution\\\\|Constitution\" {} ;)",
+      "Skill(sp.phr)",
+      "Bash(.specify/scripts/bash/create-phr.sh --title \"Constitution Update 2026 Tech Stack\" --stage constitution --json)",
+      "Bash(git config user.name)",
+      "Bash(git fetch --all --prune)",
+      "Bash(pwsh -Command \".specify/scripts/powershell/create-new-feature.ps1 -Json -Number 1 -ShortName ''multi-user-todo'' -FeatureDescription ''Multi-user Todo Web Application with Authentication''\")",
+      "Bash(.specify/scripts/bash/create-phr.sh --title \"Multi-user Todo App Spec\" --stage spec --feature multi-user-todo --json)",
+      "Bash(.specify/scripts/bash/create-phr.sh --title \"Todo App Implementation Plan\" --stage plan --feature multi-user-todo --json)",
+      "Bash(.specify/scripts/bash/create-phr.sh --title \"Todo App Tasks Generation\" --stage tasks --feature multi-user-todo --json)",
+      "Bash(git rev-parse --git-dir)",
+      "Bash(.specify/scripts/bash/create-phr.sh --title \"Todo App Implementation Complete\" --stage green --feature multi-user-todo --json)"
+    ]
+  }
+}
