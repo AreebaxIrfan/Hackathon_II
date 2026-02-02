@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Full-Stack Todo Web Application
 
 This project implements a secure multi-user todo application with authentication, JWT-based API access, and persistent storage. Users can sign up, log in, manage tasks, and access protected resources.
@@ -53,3 +54,6 @@ This project implements a secure multi-user todo application with authentication
 - `PUT /api/tasks/{id}`
 - `DELETE /api/tasks/{id}`
 - `PATCH /api/tasks/{id}/complete`
+=======
+# phase-II-
+>>>>>>> 7b77589eab766d255f13b0cfb92db943fe0021a2
