@@ -1,188 +1,107 @@
-# Dependencies
+############################
+# Node / Next.js
+############################
 node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+############################
+# Python
+############################
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg
+*.egg-info/
+dist/
+build/
+
+############################
+# Virtual Environments
+############################
 env/
 venv/
-ENV/
 .venv/
+ENV/
+.envrc
 env.bak/
 venv.bak/
-.ENV/
 
-# Testing
-.coverage
-coverage.xml
-htmlcov/
-.pytest_cache/
-.nyc_output/
-coverage/
+############################
+# Environment Variables
+############################
+.env
+.env.*
+!.env.example
 
-# Distribution / packaging
-.DS_Store
-*.tar.gz
-*.zip
-*.tgz
-*.egg-info/
-.dist/
-.build/
-.eggs/
+############################
+# Backend specific
+############################
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+backend/.env.local
+backend/.env.production
+backend/.env.testing
+backend/venv/
+backend/env/
 
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+############################
+# Frontend specific
+############################
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env.local
+frontend/.env.production
+frontend/.env.testing
+frontend/.cache/
+frontend/.vercel/
 
-# Runtime
-.pnp/
-.pnp.js
+############################
+# Docker
+############################
+.dockerignore
+*.dockerignore
 
-# IDE
+############################
+# IDEs & Editors
+############################
 .vscode/
 .idea/
+.vs/
 *.swp
 *.swo
 *~
+*.tmp
 
-# Environment variables
-.env*
-!.env.example
-
-# OS
+############################
+# OS Files
+############################
 .DS_Store
-Thumbs.db
-
-# Build outputs
-dist/
-build/
-coverage/
-.nyc_output/
-.next/
-out/
-
-# Python
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-.installed.cfg
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg
-.eggs/
-.venv/
-venv/
-ENV/
-.ENV
-
-# Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.sass-cache/
-connect.lock
-coverage/
-jspm_packages/
-node/
-res/
-src/bower_components/
-testem.log
-typings/
-
-# Next.js
-.next/
-out/
-.next/cache/
-
-# Production
-public/static/
-
-# Coverage
-coverage/
-
-# Local environment settings
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Python virtual environments
-venv/
-env/
-ENV/
-
-# Docker
-.docker/
-
-# IDE specific
-.vscode/
-.idea/
-.settings/
-.metadata/
-*.tmproj
-nbproject/
-
-# Mac
-.DS_Store
+.DS_Store?
+._*
 .AppleDouble
 .LSOverride
 Icon?
-ehthumbs.db
-Thumbs.db
-
-# Logs
-logs/
-*.log
-
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output
-
-# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
-
-# Bower dependency directory (https://bower.io/)
-bower_components
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
-
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# Typescript output
-*.tsbuildinfo
-dist/
-out/
-out-tsc/
-
-# System Files
-.DS_Store
 Thumbs.db
 ehthumbs.db
-Icon?
-.CFUserTextEncoding
+
+############################
+# Windows reserved names (VERY IMPORTANT)
+############################
+nul
