@@ -1,55 +1,53 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+Version change: 1.0.0 → 1.1.0
+Modified principles: None (completely new constitution)
+Added sections: All sections updated with Todo AI Chatbot specific content
+Removed sections: None (first version)
+Templates requiring updates: ⚠ pending - .specify/templates/plan-template.md, .specify/templates/spec-template.md, .specify/templates/tasks-template.md
+Follow-up TODOs: None
+-->
+# Todo AI Chatbot Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Spec-First Development
+No implementation without a written and approved specification. All features and changes must be documented in spec files before any code is written.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Agent-Driven Execution
+All code is generated and modified exclusively via Claude Code using Spec-Kit Plus. No manual coding is allowed - all development must follow the Agentic Dev Stack workflow: Write spec → Generate plan → Break into tasks → Implement via Claude Code.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### User Isolation by Design
+Each user can only access and modify their own tasks at all times. Database queries must always be filtered by authenticated user ID to prevent cross-user data access.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Stateless Architecture
+Backend services and MCP tools remain stateless; all state persists in the database. The chat endpoint is stateless and retrieves conversation history from the database for each request.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Single Source of Truth
+Specs in /specs directory are the authoritative reference for behavior and structure. All implementations must explicitly reference relevant specs using @specs/....
 
-### [PRINCIPLE_6_NAME]
+## Technology Stack Requirements
 
+- Frontend: OpenAI ChatKit
+- Backend: Python FastAPI
+- AI Framework: OpenAI Agents SDK
+- MCP Server: Official MCP SDK
+- ORM: SQLModel
+- Database: Neon Serverless PostgreSQL
+- Authentication: Better Auth
+- All components must integrate seamlessly with the MCP (Model Context Protocol) architecture
 
-[PRINCIPLE__DESCRIPTION]
+## Development Workflow
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
-
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Use the Agentic Dev Stack workflow: Write spec → Generate plan → Break into tasks → Implement via Claude Code
+- MCP tools must be implemented following the official MCP SDK specifications
+- Database models must follow SQLModel conventions with proper relationships
+- All API endpoints must follow REST conventions and properly handle JWT authentication
+- AI agent behavior must follow the specified natural language command mappings
+- Conversation flow must maintain statelessness while preserving context via database
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution governs all development activities for the Todo AI Chatbot project. All code changes, architectural decisions, and feature implementations must comply with these principles. Amendments to this constitution require explicit approval and must be documented with versioning. Development teams must verify compliance with all principles during code reviews and testing phases.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.1.0 | **Ratified**: 2026-01-27 | **Last Amended**: 2026-01-27
