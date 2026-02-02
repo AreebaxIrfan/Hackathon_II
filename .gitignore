@@ -1,55 +1,107 @@
-# Dependencies
+############################
+# Node / Next.js
+############################
 node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+############################
+# Python
+############################
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg
+*.egg-info/
+dist/
+build/
+
+############################
+# Virtual Environments
+############################
 env/
 venv/
-ENV/
 .venv/
+ENV/
+.envrc
 env.bak/
 venv.bak/
 
-# Builds
-build/
-dist/
-*.tar.gz
-*.whl
-*.egg
-*.egg-info/
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Environment variables
-.env*
+############################
+# Environment Variables
+############################
+.env
+.env.*
 !.env.example
 
-# IDE
+############################
+# Backend specific
+############################
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+backend/.env.local
+backend/.env.production
+backend/.env.testing
+backend/venv/
+backend/env/
+
+############################
+# Frontend specific
+############################
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env.local
+frontend/.env.production
+frontend/.env.testing
+frontend/.cache/
+frontend/.vercel/
+
+############################
+# Docker
+############################
+.dockerignore
+*.dockerignore
+
+############################
+# IDEs & Editors
+############################
 .vscode/
 .idea/
+.vs/
 *.swp
 *.swo
-.DS_Store
-Thumbs.db
+*~
+*.tmp
 
-# Testing
-.coverage
-htmlcov/
-.pytest_cache/
-.hypothesis/
-
-# OS
+############################
+# OS Files
+############################
 .DS_Store
 .DS_Store?
 ._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
+.AppleDouble
+.LSOverride
+Icon?
 Thumbs.db
+ehthumbs.db
+
+############################
+# Windows reserved names (VERY IMPORTANT)
+############################
 nul
