@@ -21,12 +21,21 @@
       "Bash(wc:*)",
       "Bash(if [ -d \"/mnt/d/hackathon-todo/specs/004-intermediate-features/checklists\" ])",
       "Bash(if [ -d \"/mnt/d/hackathon-todo/specs/006-ai-chatbot/checklists\" ])",
-      "Bash(uv run:*)"
+      "Bash(uv run:*)",
+      "Bash(git fetch --all --prune)",
+      "Bash(.specify/scripts/powershell/create-new-feature.ps1 -Json \"Agent Specification\nAgent Role\n\nThe agent acts as an intelligent todo assistant that understands natural language and manages tasks by invoking MCP tools.\n\nResponsibilities\n\nInterpret user intent from natural language\n\nSelect the correct MCP tool\n\nProvide friendly confirmations\n\nHandle ambiguity and errors politely\n\nTool Usage Rules\nUser Intent    Tool\nAdd / remember task    add_task\nShow / list tasks    list_tasks\nComplete / done    complete_task\nDelete / remove    delete_task\nUpdate / change    update_task\nBehavioral Constraints\n\nDo not guess task IDs blindly\n\nIf task reference is ambiguous, list tasks first\n\nNever expose system or database details\n\nAlways summarize what action was taken\n\nConfirmation Style\n\n\"\"✅ Task ''Buy groceries'' has been added.\"\"\n\"\"🗑️ Task ''Old task'' has been deleted.\"\"\" -Json -Number 1 -ShortName \"ai-todo-agent\" \"AI Todo Agent with Natural Language Processing and MCP Tools\")",
+      "Bash(.specify/scripts/powershell/create-new-feature.ps1 -Number 1 -ShortName \"ai-todo-agent\" \"Agent Specification\nAgent Role\n\nThe agent acts as an intelligent todo assistant that understands natural language and manages tasks by invoking MCP tools.\n\nResponsibilities\n\nInterpret user intent from natural language\n\nSelect the correct MCP tool\n\nProvide friendly confirmations\n\nHandle ambiguity and errors politely\n\nTool Usage Rules\nUser Intent    Tool\nAdd / remember task    add_task\nShow / list tasks    list_tasks\nComplete / done    complete_task\nDelete / remove    delete_task\nUpdate / change    update_task\nBehavioral Constraints\n\nDo not guess task IDs blindly\n\nIf task reference is ambiguous, list tasks first\n\nNever expose system or database details\n\nAlways summarize what action was taken\n\nConfirmation Style\n\n\"\"✅ Task ''Buy groceries'' has been added.\"\"\n\"\"🗑️ Task ''Old task'' has been deleted.\"\"\")",
+      "Bash(.specify/scripts/powershell/setup-plan.ps1 -Json)",
+      "Bash(.specify/scripts/powershell/update-agent-context.ps1 -AgentType claude)",
+      "Bash(.specify/scripts/powershell/check-prerequisites.ps1 -Json)",
+      "Bash(.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks)",
+      "Bash(.specify/scripts/powershell/create-new-feature.ps1 -Number 1 -ShortName \"mcp-tools-spec\" \"MCP Tools Specification\nTool: add_task\n\nPurpose: Create a new todo task\n\nInput Parameters:\n\nuser_id \\(string, required\\)\n\ntitle \\(string, required\\)\n\ndescription \\(string, optional\\)\n\nOutput:\n\ntask_id \\(integer\\)\n\nstatus \\(''created''\\)\n\ntitle \\(string\\)\n\nTool: list_tasks\n\nPurpose: Retrieve tasks for a user\n\nInput Parameters:\n\nuser_id \\(string, required\\)\n\nstatus \\(optional: all | pending | completed\\)\n\nOutput:\n\nArray of task objects\n\nTool: complete_task\n\nPurpose: Mark task as completed\n\nInput Parameters:\n\nuser_id \\(string, required\\)\n\ntask_id \\(integer, required\\)\n\nOutput:\n\ntask_id\n\nstatus \\(''completed''\\)\n\ntitle\n\nTool: delete_task\n\nPurpose: Delete a task\n\nInput Parameters:\n\nuser_id \\(string, required\\)\n\ntask_id \\(integer, required\\)\n\nOutput:\n\ntask_id\n\nstatus \\(''deleted''\\)\n\ntitle\n\nTool: update_task\n\nPurpose: Update task title or description\n\nInput Parameters:\n\nuser_id \\(string, required\\)\n\ntask_id \\(integer, required\\)\n\ntitle \\(optional\\)\n\ndescription \\(optional\\)\n\nOutput:\n\ntask_id\n\nstatus \\(''updated''\\)\n\ntitle\")",
+      "Bash(.specify/scripts/powershell/create-new-feature.ps1 -Number 1 -ShortName \"chat-flow-api\" \"Chat Flow & API Specification\nEndpoint\n\nPOST /api/{user_id}/chat\n\nRequest Body\n\nconversation_id \\(optional\\)\n\nmessage \\(string, required\\)\n\nResponse Body\n\nconversation_id\n\nresponse \\(assistant reply\\)\n\ntool_calls \\(invoked MCP tools\\)\n\nStateless Conversation Flow\n\nReceive user message\n\nFetch conversation history from database\n\nStore new user message\n\nRun OpenAI Agent with MCP tools\n\nMCP tool performs database operation\n\nStore assistant response\n\nReturn response to client\n\nStateless Guarantee\n\nNo in‑memory session storage\n\nServer can restart without losing context\n\nDatabase is the only source of truth\")"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "next-devtools",
     "shadcn"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

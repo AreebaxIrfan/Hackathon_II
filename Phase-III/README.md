@@ -1,59 +1,189 @@
-<<<<<<< HEAD
-# Full-Stack Todo Web Application
+# Phase III: Todo AI Chatbot
 
-This project implements a secure multi-user todo application with authentication, JWT-based API access, and persistent storage. Users can sign up, log in, manage tasks, and access protected resources.
+A stateless, AI-powered Todo Chatbot using MCP (Model Context Protocol) and the OpenAI Agents SDK.
+
+## Architecture
+
+**Flow:**
+ChatKit UI → FastAPI Chat Endpoint → OpenAI Agent → MCP Tools → Neon Database
+
+## Components
+
+- **Frontend**: OpenAI ChatKit
+- **Backend**: Python FastAPI
+- **AI Framework**: OpenAI Agents SDK
+- **MCP Server**: Official MCP SDK
+- **ORM**: SQLModel
+- **Database**: Neon Serverless PostgreSQL
+- **Authentication**: Better Auth
 
 ## Features
 
-- User registration and authentication with JWT
-- Secure task management (Create, Read, Update, Delete, Complete)
-- Multi-user data isolation
-- Persistent storage with PostgreSQL
-- Responsive web interface
+- Conversational interface for todo management
+- Natural language understanding for task actions
+- Persistent conversations with stateless API
+- MCP-based task tools
+- Resume conversations after server restart
 
-## Tech Stack
+## Setup
 
-- **Frontend**: Next.js 16+, React, TypeScript
-- **Backend**: Python FastAPI
-- **Database**: PostgreSQL / Neon Serverless
-- **ORM**: SQLModel
-- **Authentication**: JWT tokens, bcrypt password hashing
-- **Security**: Environment-based secret management
+1. **Environment Variables**:
+   ```bash
+   cp .env.example .env
+   # Update the values in .env
+   ```
 
-## Setup Instructions
+2. **Backend**:
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   uvicorn src.main:app --reload
+   ```
 
-### Backend
+3. **MCP Server**:
+   ```bash
+   cd mcp-server
+   pip install -r requirements.txt
+   python src/server.py
+   ```
 
-1. `cd backend`
-2. `pip install -r requirements.txt`
-3. `cp .env.example .env` and edit secrets
-4. Initialize DB: `python -m src.database.init_db` or `alembic upgrade head`
-5. Start server: `uvicorn src.main:app --reload --port 8000`
+4. **Frontend**:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-### Frontend
+## Database Models
 
-1. `cd frontend`
-2. `npm install`
-3. `cp .env.local.example .env.local` and set API URL
-4. `npm run dev`
+### Task
+| Field       | Description      |
+| ----------- | ---------------- |
+| id          | Primary key      |
+| user_id     | Owner of task    |
+| title       | Task title       |
+| description | Optional details |
+| completed   | Boolean status   |
+| created_at  | Creation time    |
+| updated_at  | Last update time |
 
-## API Endpoints
+### Conversation
+| Field      | Description       |
+| ---------- | ----------------- |
+| id         | Conversation ID   |
+| user_id    | Owner             |
+| created_at | Start time        |
+| updated_at | Last message time |
 
-### Authentication
+### Message
+| Field           | Description         |
+| --------------- | ------------------- |
+| id              | Message ID          |
+| user_id         | Owner               |
+| conversation_id | Linked conversation |
+| role            | user / assistant    |
+| content         | Message text        |
+| created_at      | Timestamp           |
 
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
-- `GET /api/auth/profile`
+## API Specification
 
-### Tasks
+### Endpoint
 
-- `GET /api/tasks`
-- `POST /api/tasks`
-- `GET /api/tasks/{id}`
-- `PUT /api/tasks/{id}`
-- `DELETE /api/tasks/{id}`
-- `PATCH /api/tasks/{id}/complete`
-=======
-# phase-II-
->>>>>>> 7b77589eab766d255f13b0cfb92db943fe0021a2
+`POST /api/{user_id}/chat`
+
+### Request Body
+
+| Field           | Required | Description                      |
+| --------------- | -------- | -------------------------------- |
+| conversation_id | No       | Existing conversation (optional) |
+| message         | Yes      | User natural language input      |
+
+### Response Body
+
+| Field           | Description            |
+| --------------- | ---------------------- |
+| conversation_id | Active conversation ID |
+| response        | Assistant reply        |
+| tool_calls      | MCP tools invoked      |
+
+## MCP Tools
+
+### Tool: add_task
+
+**Purpose:** Create a new task
+
+**Parameters:**
+
+* user_id (string, required)
+* title (string, required)
+* description (string, optional)
+
+**Returns:** task_id, status, title
+
+### Tool: list_tasks
+
+**Purpose:** Retrieve tasks
+
+**Parameters:**
+
+* user_id (string, required)
+* status (optional: all | pending | completed)
+
+**Returns:** Array of task objects
+
+### Tool: complete_task
+
+**Purpose:** Mark task as completed
+
+**Parameters:**
+
+* user_id (string, required)
+* task_id (integer, required)
+
+### Tool: delete_task
+
+**Purpose:** Remove task
+
+**Parameters:**
+
+* user_id (string, required)
+* task_id (integer, required)
+
+### Tool: update_task
+
+**Purpose:** Modify task
+
+**Parameters:**
+
+* user_id (string, required)
+* task_id (integer, required)
+* title (optional)
+* description (optional)
+
+## Agent Behavior Rules
+
+| Scenario         | Agent Action            |
+| ---------------- | ----------------------- |
+| Add task         | Call add_task           |
+| List tasks       | Call list_tasks         |
+| Complete task    | Call complete_task      |
+| Delete task      | Call delete_task        |
+| Update task      | Call update_task        |
+| Ambiguous delete | List first, then delete |
+
+The agent must:
+
+* Always confirm actions
+* Explain errors politely
+* Never expose internal system details
+
+## Natural Language Understanding Examples
+
+| User Input                    | Agent Tool               |
+| ----------------------------- | ------------------------ |
+| "Add a task to buy groceries" | add_task                 |
+| "Show my tasks"               | list_tasks               |
+| "What's pending?"             | list_tasks (pending)     |
+| "Mark task 3 complete"        | complete_task            |
+| "Delete the meeting task"     | list_tasks → delete_task |
+| "Change task 1"               | update_task              |
