@@ -1,0 +1,188 @@
+# MCP Tool Contracts for Todo Management
+
+# Tool: add_task
+add_task:
+  purpose: "Create a new task"
+  parameters:
+    required:
+      - user_id
+      - title
+    optional:
+      - description
+    properties:
+      user_id:
+        type: string
+        description: "The ID of the user creating the task"
+      title:
+        type: string
+        description: "The title of the task"
+        minLength: 1
+        maxLength: 255
+      description:
+        type: string
+        description: "Optional description of the task"
+        maxLength: 1000
+  returns:
+    type: object
+    properties:
+      task_id:
+        type: integer
+        description: "The ID of the created task"
+      status:
+        type: string
+        enum: ["created"]
+        description: "Status of the operation"
+      title:
+        type: string
+        description: "The title of the created task"
+
+# Tool: list_tasks
+list_tasks:
+  purpose: "Retrieve tasks for a user"
+  parameters:
+    required:
+      - user_id
+    optional:
+      - status
+    properties:
+      user_id:
+        type: string
+        description: "The ID of the user whose tasks to retrieve"
+      status:
+        type: string
+        enum: ["all", "pending", "completed"]
+        description: "Filter tasks by status"
+        default: "all"
+  returns:
+    type: object
+    properties:
+      tasks:
+        type: array
+        items:
+          $ref: "#/definitions/task_object"
+        description: "Array of task objects"
+
+# Tool: complete_task
+complete_task:
+  purpose: "Mark a task as completed"
+  parameters:
+    required:
+      - user_id
+      - task_id
+    properties:
+      user_id:
+        type: string
+        description: "The ID of the user who owns the task"
+      task_id:
+        type: integer
+        description: "The ID of the task to complete"
+  returns:
+    type: object
+    properties:
+      task_id:
+        type: integer
+        description: "The ID of the completed task"
+      status:
+        type: string
+        enum: ["completed"]
+        description: "Status of the operation"
+      title:
+        type: string
+        description: "The title of the completed task"
+
+# Tool: delete_task
+delete_task:
+  purpose: "Remove a task"
+  parameters:
+    required:
+      - user_id
+      - task_id
+    properties:
+      user_id:
+        type: string
+        description: "The ID of the user who owns the task"
+      task_id:
+        type: integer
+        description: "The ID of the task to delete"
+  returns:
+    type: object
+    properties:
+      task_id:
+        type: integer
+        description: "The ID of the deleted task"
+      status:
+        type: string
+        enum: ["deleted"]
+        description: "Status of the operation"
+      title:
+        type: string
+        description: "The title of the deleted task"
+
+# Tool: update_task
+update_task:
+  purpose: "Modify a task"
+  parameters:
+    required:
+      - user_id
+      - task_id
+    optional:
+      - title
+      - description
+    properties:
+      user_id:
+        type: string
+        description: "The ID of the user who owns the task"
+      task_id:
+        type: integer
+        description: "The ID of the task to update"
+      title:
+        type: string
+        description: "New title for the task"
+        minLength: 1
+        maxLength: 255
+      description:
+        type: string
+        description: "New description for the task"
+        maxLength: 1000
+  returns:
+    type: object
+    properties:
+      task_id:
+        type: integer
+        description: "The ID of the updated task"
+      status:
+        type: string
+        enum: ["updated"]
+        description: "Status of the operation"
+      title:
+        type: string
+        description: "The title of the updated task"
+
+# Definitions
+definitions:
+  task_object:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: "Unique identifier for the task"
+      user_id:
+        type: string
+        description: "ID of the user who owns the task"
+      title:
+        type: string
+        description: "Title of the task"
+      description:
+        type: string
+        description: "Optional description of the task"
+      completed:
+        type: boolean
+        description: "Whether the task is completed"
+      created_at:
+        type: string
+        format: date-time
+        description: "Timestamp when the task was created"
+      updated_at:
+        type: string
+        format: date-time
+        description: "Timestamp when the task was last updated"

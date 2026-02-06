@@ -1,0 +1,23 @@
+[project]
+name = "phase-three-backend"          # or any name you like, no spaces ideally
+version = "0.1.0"
+description = "Backend for Phase III project"
+readme = "README.md"                  # optional, if you have one
+requires-python = ">=3.9"             # or >=3.10, whatever your code needs
+dependencies = []                     # uv will fill this when you add packages
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
