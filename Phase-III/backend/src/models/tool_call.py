@@ -1,23 +1,21 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, List, Dict, Any
 from datetime import datetime
-from typing import Optional, Dict, Any
-import json
-
+from uuid import UUID
+from .base import UUIDModel, TimestampMixin
 
 class ToolCallBase(SQLModel):
-    conversation_id: int = Field(foreign_key="conversation.id")
+    conversation_id: UUID = Field(foreign_key="conversations.id")
     tool_name: str = Field(max_length=100)
     arguments: str  # JSON string
     result: Optional[str] = None  # JSON string
 
 
-class ToolCall(ToolCallBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    conversation_id: int = Field(foreign_key="conversation.id")
-    tool_name: str = Field(max_length=100)
-    arguments: str  # JSON string
-    result: Optional[str] = None  # JSON string
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+class ToolCall(UUIDModel, ToolCallBase, TimestampMixin, table=True):
+    __tablename__ = "tool_calls"
+
+    # Relationships
+    conversation: "Conversation" = Relationship(back_populates="tool_calls")
 
 
 class ToolCallCreate(ToolCallBase):
@@ -29,5 +27,5 @@ class ToolCallUpdate(SQLModel):
 
 
 class ToolCallRead(ToolCallBase):
-    id: int
+    id: UUID
     created_at: datetime

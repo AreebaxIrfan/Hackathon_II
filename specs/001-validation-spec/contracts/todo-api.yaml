@@ -1,0 +1,331 @@
+openapi: 3.0.3
+info:
+  title: Todo Application API
+  description: API for Todo application with AI chat functionality
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Development server
+paths:
+  /api/v1/chat/:
+    post:
+      summary: Process chat message and return AI response
+      description: Sends a chat message to the AI agent and returns the response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: The user's message to the chatbot
+                  example: "Add a new task to buy groceries"
+                conversation_id:
+                  type: string
+                  description: Optional conversation ID to continue existing conversation
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+              required:
+                - message
+      responses:
+        '200':
+          description: Successful response from AI chat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    description: The AI's response to the user
+                    example: "I've created a task 'buy groceries' for you."
+                  conversation_id:
+                    type: string
+                    description: The conversation ID for continued context
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+                  action_taken:
+                    type: string
+                    description: Action taken by the AI (e.g., "todo_created", "todo_updated")
+                    example: "todo_created"
+        '400':
+          description: Bad request - invalid input
+        '401':
+          description: Unauthorized - authentication required
+        '500':
+          description: Internal server error
+  /api/v1/todos/:
+    get:
+      summary: Get user's todos
+      description: Retrieve all todos for the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of user's todos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Todo'
+        '401':
+          description: Unauthorized - authentication required
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new todo
+      description: Create a new todo item for the authenticated user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoCreate'
+      responses:
+        '201':
+          description: Todo created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: Bad request - invalid input
+        '401':
+          description: Unauthorized - authentication required
+        '500':
+          description: Internal server error
+  /api/v1/todos/{id}:
+    get:
+      summary: Get a specific todo
+      description: Retrieve a specific todo by ID for the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Todo retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '401':
+          description: Unauthorized - authentication required
+        '404':
+          description: Todo not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update a todo
+      description: Update an existing todo for the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoUpdate'
+      responses:
+        '200':
+          description: Todo updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: Bad request - invalid input
+        '401':
+          description: Unauthorized - authentication required
+        '404':
+          description: Todo not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete a todo
+      description: Delete an existing todo for the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Todo deleted successfully
+        '401':
+          description: Unauthorized - authentication required
+        '404':
+          description: Todo not found
+        '500':
+          description: Internal server error
+  /api/v1/auth/login:
+    post:
+      summary: User login
+      description: Authenticate user and return JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                  example: "user@example.com"
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+                  example: "securePassword123"
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: JWT access token
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  token_type:
+                    type: string
+                    description: Type of token
+                    example: "bearer"
+        '400':
+          description: Invalid credentials or bad request
+        '500':
+          description: Internal server error
+  /api/v1/auth/logout:
+    post:
+      summary: User logout
+      description: Logout user and invalidate session
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+        '401':
+          description: Unauthorized - authentication required
+        '500':
+          description: Internal server error
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Todo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the todo
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        title:
+          type: string
+          description: Title of the todo
+          example: "Buy groceries"
+        description:
+          type: string
+          description: Optional description of the todo
+          example: "Milk, eggs, bread, fruit"
+        completed:
+          type: boolean
+          description: Whether the todo is completed
+          example: false
+        user_id:
+          type: string
+          format: uuid
+          description: ID of the user who owns this todo
+          example: "987e6543-e21b-32a1-d432-123456789000"
+        created_at:
+          type: string
+          format: date-time
+          description: When the todo was created
+          example: "2023-01-01T10:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: When the todo was last updated
+          example: "2023-01-01T10:00:00Z"
+        due_date:
+          type: string
+          format: date-time
+          description: Optional due date for the todo
+          example: "2023-01-02T10:00:00Z"
+      required:
+        - id
+        - title
+        - completed
+        - user_id
+        - created_at
+        - updated_at
+    TodoCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the todo
+          example: "Buy groceries"
+        description:
+          type: string
+          description: Optional description of the todo
+          example: "Milk, eggs, bread, fruit"
+        due_date:
+          type: string
+          format: date-time
+          description: Optional due date for the todo
+          example: "2023-01-02T10:00:00Z"
+      required:
+        - title
+    TodoUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: New title of the todo (optional)
+          example: "Buy groceries and vegetables"
+        description:
+          type: string
+          description: New description of the todo (optional)
+          example: "Milk, eggs, bread, fruit, spinach"
+        completed:
+          type: boolean
+          description: New completion status (optional)
+          example: true
+        due_date:
+          type: string
+          format: date-time
+          description: New due date for the todo (optional)
+          example: "2023-01-02T10:00:00Z"

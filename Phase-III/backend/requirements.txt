@@ -9,4 +9,5 @@ python-multipart==0.0.6
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 better-exceptions==0.3.3
-mcps==0.0.1
+openai-agents
+

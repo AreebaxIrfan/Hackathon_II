@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Optional
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -23,7 +24,7 @@ class ConversationService:
 
         return ConversationRead.from_orm(conversation)
 
-    async def get_conversation_by_id(self, conversation_id: int, user_id: str) -> Conversation:
+    async def get_conversation_by_id(self, conversation_id: uuid.UUID, user_id: uuid.UUID) -> Conversation:
         """Get a conversation by ID, ensuring it belongs to the user."""
         statement = select(Conversation).where(Conversation.id == conversation_id).where(Conversation.user_id == user_id)
         result = await self.session.exec(statement)
@@ -34,13 +35,13 @@ class ConversationService:
 
         return conversation
 
-    async def get_conversations_for_user(self, user_id: str) -> List[Conversation]:
+    async def get_conversations_for_user(self, user_id: uuid.UUID) -> List[Conversation]:
         """Get all conversations for a user."""
         statement = select(Conversation).where(Conversation.user_id == user_id)
         result = await self.session.exec(statement)
         return result.all()
 
-    async def add_message_to_conversation(self, conversation_id: int, user_id: str, message_create: MessageCreate) -> Message:
+    async def add_message_to_conversation(self, conversation_id: uuid.UUID, user_id: uuid.UUID, message_create: MessageCreate) -> Message:
         """Add a message to a conversation, ensuring the user owns the conversation."""
         # Verify the conversation belongs to the user
         await self.get_conversation_by_id(conversation_id, user_id)
@@ -53,7 +54,7 @@ class ConversationService:
 
         return message
 
-    async def get_messages_for_conversation(self, conversation_id: int, user_id: str) -> List[Message]:
+    async def get_messages_for_conversation(self, conversation_id: uuid.UUID, user_id: uuid.UUID) -> List[Message]:
         """Get all messages for a conversation, ensuring the user owns the conversation."""
         # Verify the conversation belongs to the user
         await self.get_conversation_by_id(conversation_id, user_id)
@@ -62,7 +63,7 @@ class ConversationService:
         result = await self.session.exec(statement)
         return result.all()
 
-    async def get_conversation_history(self, conversation_id: int, user_id: str, limit: int = 50) -> List[Message]:
+    async def get_conversation_history(self, conversation_id: uuid.UUID, user_id: uuid.UUID, limit: int = 50) -> List[Message]:
         """Get conversation history with optional limit."""
         # Verify the conversation belongs to the user
         await self.get_conversation_by_id(conversation_id, user_id)
@@ -79,7 +80,7 @@ class ConversationService:
         # Return in chronological order (oldest first)
         return list(reversed(messages))
 
-    async def add_tool_call_to_conversation(self, conversation_id: int, user_id: str, tool_call_create: ToolCallCreate) -> ToolCall:
+    async def add_tool_call_to_conversation(self, conversation_id: uuid.UUID, user_id: uuid.UUID, tool_call_create: ToolCallCreate) -> ToolCall:
         """Add a tool call to a conversation, ensuring the user owns the conversation."""
         # Verify the conversation belongs to the user
         await self.get_conversation_by_id(conversation_id, user_id)
@@ -92,7 +93,7 @@ class ConversationService:
 
         return tool_call
 
-    async def get_tool_calls_for_conversation(self, conversation_id: int, user_id: str) -> List[ToolCall]:
+    async def get_tool_calls_for_conversation(self, conversation_id: uuid.UUID, user_id: uuid.UUID) -> List[ToolCall]:
         """Get all tool calls for a conversation, ensuring the user owns the conversation."""
         # Verify the conversation belongs to the user
         await self.get_conversation_by_id(conversation_id, user_id)

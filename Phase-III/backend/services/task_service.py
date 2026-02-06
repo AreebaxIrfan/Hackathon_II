@@ -1,64 +1,61 @@
 from sqlmodel import Session, select
-from models.task import Task, TaskCreate, TaskUpdate
+from src.models.todo import Todo, TodoCreate, TodoUpdate
+from src.models.user import User
 from typing import List, Optional
 import uuid
 
 
-def create_task(session: Session, user_id: uuid.UUID, task_data: TaskCreate) -> Task:
+async def create_task(session: Session, user_id: uuid.UUID, task_data: TodoCreate) -> Todo:
     """
     Create a new task for a user.
     """
-    task = Task(
+    task = Todo(
         title=task_data.title,
         description=task_data.description,
         completed=task_data.completed,
-        priority=task_data.priority or 1,
         user_id=user_id
     )
 
     session.add(task)
-    session.commit()
-    session.refresh(task)
+    await session.commit()
+    await session.refresh(task)
 
     return task
 
 
-def get_tasks(session: Session, user_id: uuid.UUID,
+async def get_tasks(session: Session, user_id: uuid.UUID,
               completed: Optional[str] = "all",
-              limit: int = 50, offset: int = 0,
-              priority: Optional[int] = None) -> List[Task]:
+              limit: int = 50, offset: int = 0) -> List[Todo]:
     """
     Get tasks for a user with optional filtering.
     """
-    query = select(Task).where(Task.user_id == user_id)
+    query = select(Todo).where(Todo.user_id == user_id)
 
     if completed == "pending":
-        query = query.where(Task.completed == False)
+        query = query.where(Todo.completed == False)
     elif completed == "completed":
-        query = query.where(Task.completed == True)
+        query = query.where(Todo.completed == True)
 
-    if priority is not None:
-        query = query.where(Task.priority == priority)
-
-    query = query.offset(offset).limit(limit).order_by(Task.created_at.desc())
-
-    return session.exec(query).all()
+    query = query.offset(offset).limit(limit).order_by(Todo.created_at.desc())
+    result = await session.exec(query)
+    return result.all()
 
 
-def get_task(session: Session, task_id: uuid.UUID, user_id: uuid.UUID) -> Optional[Task]:
+async def get_task(session: Session, task_id: uuid.UUID, user_id: uuid.UUID) -> Optional[Todo]:
     """
     Get a specific task by ID for a user.
     """
-    statement = select(Task).where(Task.id == task_id, Task.user_id == user_id)
-    return session.exec(statement).first()
+    statement = select(Todo).where(Todo.id == task_id, Todo.user_id == user_id)
+    result = await session.exec(statement)
+    return result.first()
 
 
-def update_task(session: Session, task_id: uuid.UUID, user_id: uuid.UUID,
-                task_data: TaskUpdate) -> Optional[Task]:
+async def update_task(session: Session, task_id: uuid.UUID, user_id: uuid.UUID,
+                task_data: TodoUpdate) -> Optional[Todo]:
     """
     Update a task for a user.
     """
-    task = get_task(session, task_id, user_id)
+    task = await get_task(session, task_id, user_id)
     if not task:
         return None
 
@@ -67,38 +64,38 @@ def update_task(session: Session, task_id: uuid.UUID, user_id: uuid.UUID,
         setattr(task, field, value)
 
     session.add(task)
-    session.commit()
-    session.refresh(task)
+    await session.commit()
+    await session.refresh(task)
 
     return task
 
 
-def delete_task(session: Session, task_id: uuid.UUID, user_id: uuid.UUID) -> bool:
+async def delete_task(session: Session, task_id: uuid.UUID, user_id: uuid.UUID) -> bool:
     """
     Delete a task for a user.
     """
-    task = get_task(session, task_id, user_id)
+    task = await get_task(session, task_id, user_id)
     if not task:
         return False
 
-    session.delete(task)
-    session.commit()
+    await session.delete(task)
+    await session.commit()
 
     return True
 
 
-def toggle_task_completion(session: Session, task_id: uuid.UUID, user_id: uuid.UUID,
-                          completed: bool) -> Optional[Task]:
+async def toggle_task_completion(session: Session, task_id: uuid.UUID, user_id: uuid.UUID,
+                          completed: bool) -> Optional[Todo]:
     """
     Toggle task completion status for a user.
     """
-    task = get_task(session, task_id, user_id)
+    task = await get_task(session, task_id, user_id)
     if not task:
         return None
 
     task.completed = completed
     session.add(task)
-    session.commit()
-    session.refresh(task)
+    await session.commit()
+    await session.refresh(task)
 
     return task

@@ -1,28 +1,27 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session
 from typing import List
 import uuid
-
-from database.session import get_session
+from sqlmodel.ext.asyncio.session import AsyncSession
+from src.database import get_session
 from auth.dependencies import get_current_user
-from services.task_service import (
+from src.models.todo import Todo, TodoCreate, TodoUpdate, TodoRead
+from src.services.task_service import (
     create_task, get_tasks, get_task, update_task, delete_task, toggle_task_completion
 )
-from schemas.task import TaskCreate, TaskUpdate, TaskResponse, TaskFilter
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
-@router.post("/", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
-def create_user_task(
-    task_data: TaskCreate,
+@router.post("/", response_model=TodoRead, status_code=status.HTTP_201_CREATED)
+async def create_user_task(
+    task_data: TodoCreate,
     current_user: dict = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Create a new task for the authenticated user.
     """
-    task = create_task(
+    task = await create_task(
         session=session,
         user_id=current_user["user_id"],
         task_data=task_data
@@ -30,39 +29,38 @@ def create_user_task(
     return task
 
 
-@router.get("/", response_model=List[TaskResponse])
-def get_user_tasks(
+@router.get("/", response_model=List[TodoRead])
+async def get_user_tasks(
     completed: str = "all",
     limit: int = 50,
     offset: int = 0,
     priority: int = None,
     current_user: dict = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Get tasks for the authenticated user.
     """
-    tasks = get_tasks(
+    tasks = await get_tasks(
         session=session,
         user_id=current_user["user_id"],
         completed=completed,
         limit=limit,
-        offset=offset,
-        priority=priority
+        offset=offset
     )
     return tasks
 
 
-@router.get("/{task_id}", response_model=TaskResponse)
-def get_specific_task(
+@router.get("/{task_id}", response_model=TodoRead)
+async def get_specific_task(
     task_id: uuid.UUID,
     current_user: dict = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Get a specific task by ID for the authenticated user.
     """
-    task = get_task(
+    task = await get_task(
         session=session,
         task_id=task_id,
         user_id=current_user["user_id"]
@@ -75,17 +73,17 @@ def get_specific_task(
     return task
 
 
-@router.put("/{task_id}", response_model=TaskResponse)
-def update_user_task(
+@router.put("/{task_id}", response_model=TodoRead)
+async def update_user_task(
     task_id: uuid.UUID,
-    task_data: TaskUpdate,
+    task_data: TodoUpdate,
     current_user: dict = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Update a task for the authenticated user.
     """
-    updated_task = update_task(
+    updated_task = await update_task(
         session=session,
         task_id=task_id,
         user_id=current_user["user_id"],
@@ -100,15 +98,15 @@ def update_user_task(
 
 
 @router.delete("/{task_id}")
-def delete_user_task(
+async def delete_user_task(
     task_id: uuid.UUID,
     current_user: dict = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Delete a task for the authenticated user.
     """
-    success = delete_task(
+    success = await delete_task(
         session=session,
         task_id=task_id,
         user_id=current_user["user_id"]
@@ -121,16 +119,16 @@ def delete_user_task(
     return {"message": "Task deleted successfully"}
 
 
-@router.patch("/{task_id}/complete", response_model=TaskResponse)
-def complete_user_task(
+@router.patch("/{task_id}/complete", response_model=TodoRead)
+async def complete_user_task(
     task_id: uuid.UUID,
     current_user: dict = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Mark a task as complete for the authenticated user.
     """
-    updated_task = toggle_task_completion(
+    updated_task = await toggle_task_completion(
         session=session,
         task_id=task_id,
         user_id=current_user["user_id"],
@@ -144,16 +142,16 @@ def complete_user_task(
     return updated_task
 
 
-@router.patch("/{task_id}/incomplete", response_model=TaskResponse)
-def incomplete_user_task(
+@router.patch("/{task_id}/incomplete", response_model=TodoRead)
+async def incomplete_user_task(
     task_id: uuid.UUID,
     current_user: dict = Depends(get_current_user),
-    session: Session = Depends(get_session)
+    session: AsyncSession = Depends(get_session)
 ):
     """
     Mark a task as incomplete for the authenticated user.
     """
-    updated_task = toggle_task_completion(
+    updated_task = await toggle_task_completion(
         session=session,
         task_id=task_id,
         user_id=current_user["user_id"],

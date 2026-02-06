@@ -30,12 +30,12 @@ const getAuthHeaders = () => ({
 // Get all tasks with optional filtering
 export const getAllTasks = async (status: 'all' | 'pending' | 'completed' = 'all'): Promise<Task[]> => {
   const queryParams = new URLSearchParams({
-    status,
+    completed: status,
   }).toString();
 
-  console.log(`Fetching tasks from: ${process.env.NEXT_PUBLIC_API_URL}/api/tasks?${queryParams}`);
+  console.log(`Fetching tasks from: ${process.env.NEXT_PUBLIC_API_URL}/api/tasks/?${queryParams}`);
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/tasks?${queryParams}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/?${queryParams}`,
     {
       headers: getAuthHeaders(),
     }
@@ -51,8 +51,8 @@ export const getAllTasks = async (status: 'all' | 'pending' | 'completed' = 'all
 
 // Create a new task
 export const createTask = async (taskData: TaskCreateData): Promise<Task> => {
-  console.log(`Creating task at: ${process.env.NEXT_PUBLIC_API_URL}/api/tasks`, taskData);
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks`, {
+  console.log(`Creating task at: ${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`, taskData);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(taskData),
@@ -82,7 +82,7 @@ export const getTask = async (id: string): Promise<Task> => {
 
 // Update a task
 export const updateTask = async (id: string, taskData: TaskUpdateData): Promise<Task> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`, {
     method: 'PUT',
     headers: getAuthHeaders(),
     body: JSON.stringify(taskData),
@@ -97,7 +97,7 @@ export const updateTask = async (id: string, taskData: TaskUpdateData): Promise<
 
 // Delete a task
 export const deleteTask = async (id: string): Promise<void> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });

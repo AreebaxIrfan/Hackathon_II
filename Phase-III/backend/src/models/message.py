@@ -1,22 +1,21 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, List
 from datetime import datetime
-from typing import Optional
-
+from uuid import UUID
+from .base import UUIDModel, TimestampMixin
 
 class MessageBase(SQLModel):
-    user_id: str = Field(foreign_key="user.id")
-    conversation_id: int = Field(foreign_key="conversation.id")
+    user_id: UUID = Field(foreign_key="users.id")
+    conversation_id: UUID = Field(foreign_key="conversations.id")
     role: str = Field(regex="^(user|assistant)$")
     content: str = Field(min_length=1, max_length=5000)
 
 
-class Message(MessageBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: str = Field(foreign_key="user.id")
-    conversation_id: int = Field(foreign_key="conversation.id")
-    role: str = Field(regex="^(user|assistant)$")
-    content: str = Field(min_length=1, max_length=5000)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+class Message(UUIDModel, MessageBase, TimestampMixin, table=True):
+    __tablename__ = "messages"
+
+    # Relationships
+    conversation: "Conversation" = Relationship(back_populates="messages")
 
 
 class MessageCreate(MessageBase):
@@ -28,5 +27,5 @@ class MessageUpdate(SQLModel):
 
 
 class MessageRead(MessageBase):
-    id: int
+    id: UUID
     created_at: datetime

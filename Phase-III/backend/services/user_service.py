@@ -1,10 +1,11 @@
-from sqlmodel import Session, select
-from models.user import User
+from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import select
+from src.models.user import User
 from auth.jwt import get_password_hash
 from typing import Optional
 import uuid
 
-def create_user(session: Session, email: str, password: str) -> User:
+async def create_user(session: AsyncSession, email: str, password: str) -> User:
     """
     Create a new user with hashed password.
     """
@@ -18,35 +19,37 @@ def create_user(session: Session, email: str, password: str) -> User:
 
     # Add to session and commit
     session.add(user)
-    session.commit()
-    session.refresh(user)
+    await session.commit()
+    await session.refresh(user)
 
     return user
 
-def get_user_by_email(session: Session, email: str) -> Optional[User]:
+async def get_user_by_email(session: AsyncSession, email: str) -> Optional[User]:
     """
     Get a user by email.
     """
     statement = select(User).where(User.email == email)
-    user = session.exec(statement).first()
+    result = await session.exec(statement)
+    user = result.first()
     return user
 
-def get_user_by_id(session: Session, user_id: uuid.UUID) -> Optional[User]:
+async def get_user_by_id(session: AsyncSession, user_id: uuid.UUID) -> Optional[User]:
     """
     Get a user by ID.
     """
     statement = select(User).where(User.id == user_id)
-    user = session.exec(statement).first()
+    result = await session.exec(statement)
+    user = result.first()
     return user
 
-def authenticate_user(session: Session, email: str, password: str) -> Optional[User]:
+async def authenticate_user(session: AsyncSession, email: str, password: str) -> Optional[User]:
     """
     Authenticate a user by email and password.
     """
     from auth.jwt import verify_password
 
     # Find user by email
-    user = get_user_by_email(session, email)
+    user = await get_user_by_email(session, email)
 
     if not user or not verify_password(password, user.hashed_password):
         return None
