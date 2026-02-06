@@ -4,7 +4,6 @@ A stateless, AI-powered Todo Chatbot using MCP (Model Context Protocol) and the 
 
 ## Architecture
 
-
 **Flow:**
 ChatKit UI → FastAPI Chat Endpoint → OpenAI Agent → MCP Tools → Neon Database
 
