@@ -1,0 +1,27 @@
+{
+  "name": "fullstack-web-application",
+  "version": "1.0.0",
+  "description": "A secure, multi-user full-stack web application with persistent storage and JWT-based authentication.",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && uvicorn main:app --reload",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && uvicorn main:app --host 0.0.0.0 --port 8000"
+  },
+  "keywords": [
+    "fullstack",
+    "web",
+    "application",
+    "todo",
+    "authentication",
+    "jwt",
+    "nextjs",
+    "fastapi"
+  ],
+  "author": "Spec-Driven Development Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

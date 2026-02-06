@@ -1,0 +1,143 @@
+openapi: 3.0.1
+info:
+  title: Chat Interface Visibility API
+  description: API contract for the chatbot interface ensuring proper UI rendering and visibility
+  version: 1.0.0
+paths:
+  /api/{user_id}/chat:
+    post:
+      summary: Process chat messages and return responses
+      description: Endpoint for sending user messages to the AI agent and receiving responses, with proper error handling to ensure UI visibility
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the user making the request
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id:
+                  type: string
+                  description: Existing conversation ID (optional)
+                  example: "conv_12345"
+                message:
+                  type: string
+                  description: User's natural language input
+                  example: "Add a task to buy groceries"
+              required:
+                - message
+      responses:
+        '200':
+          description: Successful response from the AI agent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: string
+                    description: Active conversation ID
+                    example: "conv_12345"
+                  response:
+                    type: string
+                    description: Assistant's reply to the user
+                    example: "✅ Task 'Buy groceries' has been added."
+                  tool_calls:
+                    type: array
+                    description: MCP tools that were invoked
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the tool called
+                          example: "add_task"
+                        arguments:
+                          type: object
+                          description: Arguments passed to the tool
+                          example:
+                            user_id: "user_123"
+                            title: "Buy groceries"
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message describing the issue
+                    example: "Message is required"
+        '401':
+          description: Unauthorized - invalid or missing authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating authentication failure
+                    example: "Authentication required"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating server-side issue
+                    example: "Internal server error occurred"
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Provides health status of the application, important for UI to verify backend connectivity
+      responses:
+        '200':
+          description: Health check successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Health status of the system
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: Time when the health check was performed
+                    example: "2026-02-04T10:00:00Z"
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Health status of the system
+                    example: "unhealthy"
+                  error:
+                    type: string
+                    description: Description of the health issue
+                    example: "Database connection failed"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: JWT token for authentication
+security:
+  - bearerAuth: []

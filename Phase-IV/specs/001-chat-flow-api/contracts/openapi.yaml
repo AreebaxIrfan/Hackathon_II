@@ -1,0 +1,87 @@
+openapi: 3.0.1
+info:
+  title: Chat API for Todo Assistant
+  description: API for the stateless chat interface that enables users to interact with the AI-powered todo assistant
+  version: 1.0.0
+paths:
+  /api/{user_id}/chat:
+    post:
+      summary: Process natural language input and manage tasks
+      description: Receives user's natural language input and processes it using the AI agent with MCP tools
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the user making the request
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id:
+                  type: string
+                  description: Existing conversation ID (optional)
+                  example: "conv_12345"
+                message:
+                  type: string
+                  description: User's natural language input
+                  example: "Add a task to buy groceries"
+              required:
+                - message
+      responses:
+        '200':
+          description: Successful response from the AI agent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: string
+                    description: Active conversation ID
+                    example: "conv_12345"
+                  response:
+                    type: string
+                    description: Assistant's reply to the user
+                    example: "✅ Task 'Buy groceries' has been added."
+                  tool_calls:
+                    type: array
+                    description: MCP tools that were invoked
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the tool called
+                          example: "add_task"
+                        arguments:
+                          type: object
+                          description: Arguments passed to the tool
+                          example:
+                            user_id: "user_123"
+                            title: "Buy groceries"
+                        result:
+                          type: object
+                          description: Result from the tool execution
+                          example:
+                            task_id: 1
+                            status: "created"
+                            title: "Buy groceries"
+        '400':
+          description: Bad request - invalid input
+        '401':
+          description: Unauthorized - invalid or missing authentication
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: JWT token for authentication

@@ -1,0 +1,7 @@
+mcps==0.0.1
+pydantic==2.5.0
+pydantic-settings==2.1.0
+fastapi==0.104.1
+uvicorn==0.24.0
+sqlmodel==0.0.8
+openai==1.3.5
