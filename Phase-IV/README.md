@@ -1,4 +1,37 @@
-# Phase III: Todo AI Chatbot
+# Phase IV: Local Kubernetes Deployment ✅ COMPLETED
+
+## Overview
+Phase IV focuses on deploying the Todo Chatbot application to a local Kubernetes cluster using Minikube. This phase emphasizes container-first architecture, AI-assisted deployment tools, and automated configuration management.
+
+## Status: ✅ COMPLETED
+All objectives have been successfully implemented and validated.
+
+## Objectives
+- ✅ Deploy Todo Chatbot to local Kubernetes cluster
+- ✅ Implement AI-assisted deployment and management
+- ✅ Create reusable Helm charts
+- ✅ Validate local deployment functionality
+
+## Key Deliverables
+- **Dockerfiles**: Multi-stage builds for backend (FastAPI) and frontend (Next.js)
+- **Kubernetes Manifests**: Deployments, services, and configurations
+- **Helm Chart**: Fully parameterized chart for easy deployment
+- **AI Tools Integration**: Scripts for kubectl-ai, Gordon, and Kagent
+- **Validation Scripts**: Comprehensive testing and verification tools
+- **Documentation**: Complete deployment guides and procedures
+
+## Implementation Summary
+- **47 tasks completed** across all phases
+- **User Story 1**: MVP deployment to Kubernetes (Completed)
+- **User Story 2**: AI-assisted management (Completed)
+- **User Story 3**: Helm chart deployment (Completed)
+- **User Story 4**: Validation and testing (Completed)
+
+For complete deployment instructions, see [deployment/README.md](deployment/README.md)
+
+---
+
+# Original Phase III: Todo AI Chatbot
 
 A stateless, AI-powered Todo Chatbot using MCP (Model Context Protocol) and the OpenAI Agents SDK.
 

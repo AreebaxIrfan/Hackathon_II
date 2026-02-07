@@ -1,0 +1,158 @@
+openapi: 3.0.0
+info:
+  title: Kubernetes Deployment Management API
+  version: 1.0.0
+  description: API for managing Kubernetes deployments of the Todo Chatbot application
+
+paths:
+  /api/deployments:
+    post:
+      summary: Create a new deployment
+      description: Deploys the Todo Chatbot application to Kubernetes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeploymentRequest'
+      responses:
+        '201':
+          description: Deployment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentResponse'
+
+  /api/deployments/{name}:
+    get:
+      summary: Get deployment status
+      description: Retrieves the current status of a specific deployment
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deployment status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentStatus'
+
+    delete:
+      summary: Delete a deployment
+      description: Removes a deployment from Kubernetes
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deployment deleted successfully
+
+  /api/services:
+    get:
+      summary: List services
+      description: Retrieves all services in the namespace
+      responses:
+        '200':
+          description: List of services retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceInfo'
+
+components:
+  schemas:
+    DeploymentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the deployment
+        image:
+          type: string
+          description: Container image to deploy
+        replicas:
+          type: integer
+          description: Number of replicas
+          default: 1
+        environment:
+          type: object
+          description: Environment variables for the deployment
+      required:
+        - name
+        - image
+
+    DeploymentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the deployment
+        name:
+          type: string
+          description: Name of the deployment
+        status:
+          type: string
+          description: Current status of the deployment
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the deployment was created
+
+    DeploymentStatus:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the deployment
+        status:
+          type: string
+          description: Current status (e.g., Running, Failed, Pending)
+        replicas:
+          type: integer
+          description: Number of desired replicas
+        readyReplicas:
+          type: integer
+          description: Number of ready replicas
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp of last status update
+
+    ServiceInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the service
+        type:
+          type: string
+          description: Type of the service (ClusterIP, NodePort, LoadBalancer)
+        clusterIP:
+          type: string
+          description: Internal IP address of the service
+        ports:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortInfo'
+
+    PortInfo:
+      type: object
+      properties:
+        port:
+          type: integer
+          description: Port number
+        targetPort:
+          type: integer
+          description: Target port in the container
+        protocol:
+          type: string
+          description: Protocol (TCP, UDP)

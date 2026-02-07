@@ -1,0 +1,216 @@
+openapi: 3.0.0
+info:
+  title: Backend Service API Contract
+  description: API contract for the backend service in the cloud-native Kubernetes architecture
+  version: 1.0.0
+servers:
+  - url: http://backend-service:8000
+    description: Backend service running in Kubernetes cluster
+paths:
+  /health:
+    get:
+      summary: Backend health check
+      description: Health check endpoint for the backend service
+      responses:
+        '200':
+          description: Backend service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    example: "2026-02-08T10:00:00Z"
+                  services:
+                    type: object
+                    properties:
+                      database:
+                        type: boolean
+                        example: true
+                      cache:
+                        type: boolean
+                        example: true
+  /api/status:
+    get:
+      summary: System status
+      description: Returns overall system status information
+      responses:
+        '200':
+          description: System status information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "operational"
+                  uptime:
+                    type: string
+                    example: "2 hours 15 minutes"
+                  version:
+                    type: string
+                    example: "1.0.0"
+  /api/users/{userId}:
+    get:
+      summary: Get user information
+      description: Retrieve information about a specific user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      summary: Update user information
+      description: Update information for a specific user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/users/{userId}/services:
+    get:
+      summary: Get user services
+      description: Retrieve list of services associated with a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of user services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the user
+        name:
+          type: string
+          description: Full name of the user
+        email:
+          type: string
+          description: Email address of the user
+        createdAt:
+          type: string
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          description: Last update timestamp
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Full name of the user
+        email:
+          type: string
+          description: Email address of the user
+    Service:
+      type: object
+      required:
+        - id
+        - name
+        - status
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the service
+        name:
+          type: string
+          description: Name of the service
+        status:
+          type: string
+          description: Status of the service
+          enum: [active, inactive, maintenance]
+        endpoint:
+          type: string
+          description: Service endpoint URL
+  responses:
+    BadRequest:
+      description: Bad request sent to the service
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid input provided"
+    NotFound:
+      description: Requested resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Resource not found"
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "An internal error occurred"

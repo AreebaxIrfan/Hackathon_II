@@ -1,0 +1,103 @@
+openapi: 3.0.0
+info:
+  title: Frontend Service API Contract
+  description: API contract for the frontend service in the cloud-native Kubernetes architecture
+  version: 1.0.0
+servers:
+  - url: http://frontend-service:3000
+    description: Frontend service running in Kubernetes cluster
+paths:
+  /:
+    get:
+      summary: Serve frontend application
+      description: Returns the main HTML page for the frontend application
+      responses:
+        '200':
+          description: Main application page
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "<html>...</html>"
+  /health:
+    get:
+      summary: Frontend health check
+      description: Health check endpoint for the frontend service
+      responses:
+        '200':
+          description: Frontend service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    example: "2026-02-08T10:00:00Z"
+  /api/{proxy+}:
+    x-openapi-proxy:
+      target: http://backend-service:8000
+      description: Proxy API requests to backend service
+    get:
+      summary: Proxy GET requests to backend
+      description: Forward GET requests to the backend service
+      parameters:
+        - $ref: '#/components/parameters/ProxyPath'
+      responses:
+        '200':
+          description: Response from backend service
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Proxy POST requests to backend
+      description: Forward POST requests to the backend service
+      parameters:
+        - $ref: '#/components/parameters/ProxyPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Response from backend service
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  parameters:
+    ProxyPath:
+      name: proxy
+      in: path
+      required: true
+      description: Path to proxy to the backend service
+      schema:
+        type: string
+  responses:
+    BadRequest:
+      description: Bad request sent to the service
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Bad request"
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal server error"
