@@ -1,1 +1,12 @@
-{"name": "ai-todo-frontend","version": "1.0.0","description": "Frontend for the AI-powered todo assistant","main": "index.js","scripts": {"dev": "next dev","build": "next build","start": "next start","lint": "next lint"},"dependencies": {"next": "^16.0.0","react": "^19.0.0","react-dom": "^19.0.0","@openai/chat-components": "^1.4.3"},"devDependencies": {"typescript": "^5.0.0","@types/react": "^19.0.0","@types/node": "^20.0.0"}}
+{"name": "ai-todo-frontend","version": "1.0.0","description": "Frontend for the AI-powered todo assistant","main": "index.js","scripts": {"dev": "next dev","build": "next build","start": "next start","lint": "next lint"},"dependencies": {
+  "next": "^16.0.0",
+  "react": "^18.3.1",
+  "react-dom": "^18.3.1",
+  "@openai/chatkit-react": "^1.4.3"
+},
+"devDependencies": {
+  "typescript": "^5.0.0",
+  "@types/react": "^18.3.0",
+  "@types/react-dom": "^18.3.0",
+  "@types/node": "^20.0.0"
+}}
