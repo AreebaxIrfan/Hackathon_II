@@ -147,7 +147,7 @@ const ChatComponent = () => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Type your message here..."
-          className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           disabled={isLoading}
         />
         <button
